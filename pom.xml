@@ -71,6 +71,7 @@
                 <version>1.5.9.RELEASE</version>
                 <configuration>
                     <executable>true</executable>
+                    <outputDirectory>${project.basedir}/docker</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
