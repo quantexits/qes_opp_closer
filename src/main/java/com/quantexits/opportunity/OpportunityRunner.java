@@ -38,28 +38,9 @@ public class OpportunityRunner {
      * @throws RunnerException Exception while running.
      */
     public void run(final int original_start_day, final int original_end_day) throws RunnerException {
-        int startDay, endDay, stepSize, jobArrayIndex = 0, numNodes = 1;
-        boolean isJobArray = false;
+        int startDay, endDay, jobArrayIndex = 0;
 
         System.out.println("**** Starting the Runner *****");
-
-        // see if we are running in an AWS Batch job array or not
-        final String jobArrayIndexString = System.getenv("AWS_BATCH_JOB_ARRAY_INDEX");
-        final String numNodesString = System.getenv("QES_JOB_ARRAY_SIZE");
-        System.out.println("**** Done getting environment vars. numNodes = "
-                + numNodesString + ", jobArrayIndex = " + jobArrayIndexString + "*****");
-        if(jobArrayIndexString != null && !jobArrayIndexString.isEmpty()) {
-            jobArrayIndex = Integer.parseInt(jobArrayIndexString);
-            isJobArray = true;
-            if(numNodesString != null && !numNodesString.isEmpty()) {
-                numNodes = Integer.parseInt(numNodesString);
-            }
-            else {
-                System.out.println("**** ERROR: QES_JOB_ARRAY_SIZE environment variable not set. *****");
-                throw new RunnerException();
-            }
-
-        }
 
         try {
             // See if we are just starting or resuming from an interruption.
@@ -69,23 +50,8 @@ public class OpportunityRunner {
             if (!status.isProcessing()) {
                 // this is first time the program has been called
                 System.out.println("**** Frist time called for this program. *****");
-                if (isJobArray) {
-                    // divide up the work and take our portion
-                    System.out.println("**** We are running in jobArray environment *****");
-                    stepSize = (original_end_day - original_start_day + 1) / numNodes;
-                    startDay = original_start_day + jobArrayIndex * stepSize;
-                    if (jobArrayIndex != (numNodes - 1)) {
-                        endDay = original_start_day + (jobArrayIndex + 1) * stepSize - 1;
-                    } else {
-                        // we are last node so just take what's left
-                        endDay = original_end_day;
-                    }
-
-                } else {
-                    System.out.println("**** Not running in a jobArray environment. *****");
-                    startDay = original_start_day;
-                    endDay = original_end_day;
-                }
+                startDay = original_start_day;
+                endDay = original_end_day;
                 // record original inputs
                 System.out.println("**** Setting Status. *****");
                 oppCloseStatusDAO.setOpportunityCloseStatus(
@@ -114,9 +80,9 @@ public class OpportunityRunner {
 
             }
             // reset opportunity generation status
-            oppCloseStatusDAO.setOpportunityCloseStatus(
-                    new OpportunityCloseStatus(false,0,0,0, jobArrayIndex)
-            );
+            //oppCloseStatusDAO.setOpportunityCloseStatus(
+            //        new OpportunityCloseStatus(false,0,0,0, jobArrayIndex)
+            //);
         } catch (final DAOException e) {
             throw new RunnerException(e);
         }

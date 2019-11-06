@@ -54,7 +54,7 @@ public class OpportunityTaker {
     }
 
     private boolean shouldClose(final OpportunityTaken opp, final int tradingDay) throws DAOException {
-        if (opp.getHoldPeriod().getIntValue() == -1) {
+        if ((opp.getHoldPeriod().getIntValue() == -1) || (opp.getHoldPeriod().getIntValue() == -2)) {
             return shouldCloseFirstProfit(opp, tradingDay);
         } else {
             return (opp.getEntryTradingDay() + opp.getHoldPeriod().getIntValue() == tradingDay);
@@ -62,7 +62,9 @@ public class OpportunityTaker {
     }
 
     private boolean shouldCloseFirstProfit(final OpportunityTaken opp, final int tradingDay) throws DAOException {
-        if (opp.getEntryTradingDay() + 5 == tradingDay) {
+        if ((opp.getHoldPeriod().getIntValue() == -1) && (opp.getEntryTradingDay() + 5 == tradingDay)) {
+            return true;
+        } else if((opp.getHoldPeriod().getIntValue() == -2) && (opp.getEntryTradingDay() + 4 == tradingDay)) {
             return true;
         } else {
             final Trade trade = eodDAO.getTrade(opp.getSymbolId(), opp.getDirection(),
