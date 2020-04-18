@@ -37,10 +37,29 @@ public class OpportunityRunner {
      *
      * @throws RunnerException Exception while running.
      */
-    public void run(final int original_start_day, final int original_end_day) throws RunnerException {
+    public void run(int original_start_day, int original_end_day) throws RunnerException {
         int startDay, endDay, jobArrayIndex = 0;
 
         System.out.println("**** Starting the Runner *****");
+
+        // first see if we need to check environment variables for start and end days.
+        if (original_start_day <= 0 || original_end_day <= 0) {
+            final String envStartDay = System.getenv("START_DAY");
+            final String envEndDay = System.getenv("END_DAY");
+            if(envStartDay != null && !envStartDay.isEmpty()) {
+                original_start_day = Integer.parseInt(envStartDay);
+            }
+            if(envEndDay != null && !envEndDay.isEmpty()) {
+                original_end_day = Integer.parseInt(envEndDay);
+            }
+        }
+
+        // end if we do not have a valid startDate and valid endDate
+        if (original_start_day <= 0 || original_end_day <= 0) {
+            System.out.println("**** ERROR: Invalid Start or End date. startDate: " + original_start_day +
+                    " endDate: " + original_end_day + " *****");
+            throw new RunnerException();
+        }
 
         try {
             // See if we are just starting or resuming from an interruption.

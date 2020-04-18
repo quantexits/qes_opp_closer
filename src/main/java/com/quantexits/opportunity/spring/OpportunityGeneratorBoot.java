@@ -33,18 +33,17 @@ public class OpportunityGeneratorBoot implements CommandLineRunner {
      */
     @Override
     public void run(final String... args) throws Exception {
-        if (args.length != 2) {
-            System.out.println("Error: You must provide two numbers, a start day number and an end day number");
+        int start_day = -1;
+        int end_day = -1;
+        if (args.length == 2) {
+            start_day = Integer.parseInt(args[0]);
+            end_day = Integer.parseInt(args[1]);
         }
-        else {
-            try {
-                final int start_day = Integer.parseInt(args[0]);
-                final int end_day = Integer.parseInt(args[1]);
-                System.out.println("Start Day: " + start_day + " End Day: " + end_day);
-                opportunityRunner.run(start_day, end_day);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            System.out.println("Start Day: " + start_day + " End Day: " + end_day);
+            opportunityRunner.run(start_day, end_day);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
