@@ -55,7 +55,7 @@ public class OpportunityTaker {
 
     private boolean shouldClose(final OpportunityTaken opp, final int tradingDay) throws DAOException {
         if ((opp.getHoldPeriod().getIntValue() == -1) || (opp.getHoldPeriod().getIntValue() == -2)) {
-            return shouldCloseFirstProfit(opp, tradingDay);
+            return (opp.getEntryTradingDay() != tradingDay) && shouldCloseFirstProfit(opp, tradingDay);
         } else {
             return (opp.getEntryTradingDay() + opp.getHoldPeriod().getIntValue() == tradingDay);
         }
