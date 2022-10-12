@@ -93,6 +93,7 @@ public class OpportunityRunner {
         try {
 
             for (int day = startDay; day <= endDay; day++) {
+                System.out.println("Starting day: " + day);
                 oppCloseStatusDAO.updateOpportunityCloseStatus(day, jobArrayIndex);
                 oppTaker.handleOpenOpportunities(day);
                 System.out.println("Closed: " + day);
